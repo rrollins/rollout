@@ -236,7 +236,9 @@ describe "Rollout" do
       feature.to_hash.should == {
         :groups => [:caretakers, :greeters],
         :percentage => 10,
-        :users => %w(42)
+        :users => %w(42),
+        :short_name => nil,
+        :description => nil
       }
 
       feature = @rollout.get(:signup)
@@ -260,13 +262,17 @@ describe "Rollout" do
       @rollout.get(:chat).to_hash.should == {
         :percentage => 12,
         :users => %w(24 42),
-        :groups => [:dope_people]
+        :groups => [:dope_people],
+        :short_name => nil,
+        :description => nil
       }
       @legacy.deactivate_all(:chat)
       @rollout.get(:chat).to_hash.should == {
         :percentage => 12,
         :users => %w(24 42),
-        :groups => [:dope_people]
+        :groups => [:dope_people],
+        :short_name => nil,
+        :description => nil
       }
       @redis.get("feature:chat").should_not be_nil
     end

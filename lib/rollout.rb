@@ -3,23 +3,25 @@ require "zlib"
 
 class Rollout
   class Feature
-    attr_reader :name, :groups, :users, :percentage
-    attr_writer :percentage, :groups, :users
+    attr_reader :name, :groups, :users, :percentage, :short_name, :description
+    attr_writer :percentage, :groups, :users, :short_name, :description
 
     def initialize(name, string = nil)
       @name = name
       if string
-        raw_percentage,raw_users,raw_groups = string.split("|")
+        raw_percentage,raw_users,raw_groups,raw_short_name,raw_description = string.split("|")
         @percentage = raw_percentage.to_i
         @users = (raw_users || "").split(",").map(&:to_s)
         @groups = (raw_groups || "").split(",").map(&:to_sym)
+        @description = raw_description
+        @short_name = raw_short_name
       else
         clear
       end
     end
 
     def serialize
-      "#{@percentage}|#{@users.join(",")}|#{@groups.join(",")}"
+      "#{@percentage}|#{@users.join(",")}|#{@groups.join(",")}|#{@short_name}|#{@description}"
     end
 
     def add_user(user)
@@ -55,9 +57,12 @@ class Rollout
     end
 
     def to_hash
-      {:percentage => @percentage,
-       :groups     => @groups,
-       :users      => @users}
+      { :percentage => @percentage,
+        :groups     => @groups,
+        :users      => @users,
+        :short_name => @short_name,
+        :description => @description
+      }
     end
 
     private
