@@ -168,6 +168,11 @@ class Rollout
     (@storage.get(features_key) || "").split(",").map(&:to_sym)
   end
 
+  def save(feature)
+    @storage.set(key(feature.name), feature.serialize)
+    @storage.set(features_key, (features | [feature.name]).join(","))
+  end
+
   private
     def key(name)
       "feature:#{name}"
@@ -181,11 +186,6 @@ class Rollout
       f = get(feature)
       yield(f)
       save(f)
-    end
-
-    def save(feature)
-      @storage.set(key(feature.name), feature.serialize)
-      @storage.set(features_key, (features | [feature.name]).join(","))
     end
 
     def migrate?
